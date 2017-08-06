@@ -1,25 +1,22 @@
 package main
 
 import (
-	"flag"
 	"log"
 	"os"
+	"strconv"
 )
 
 func main() {
-	port := flag.Int("p", 0, "the port number to kill")
-	flag.Parse()
-
-	if *port == 0 {
-		usageAndExit()
+	if len(os.Args) < 2 {
+		log.Fatal("expected port argument")
 	}
 
-	r, err := getProcs()
+	port, err := strconv.Atoi(os.Args[1])
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("'%s' is not a valid port number", os.Args[1])
 	}
 
-	pid, err := getPid(r, *port)
+	pid, err := getPid(port)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -27,9 +24,4 @@ func main() {
 	if err = killPid(pid); err != nil {
 		log.Fatal(err)
 	}
-}
-
-func usageAndExit() {
-	flag.Usage()
-	os.Exit(1)
 }
