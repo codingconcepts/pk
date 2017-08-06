@@ -11,8 +11,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/pkg/errors"
 )
 
 func getPid(port int) (pid int, err error) {
@@ -26,7 +24,7 @@ func getPid(port int) (pid int, err error) {
 	cmd.Stderr = os.Stderr
 
 	if err := cmd.Run(); err != nil {
-		return 0, errors.Wrap(err, "error fetching ports")
+		return 0, fmt.Errorf("error fetching ports: %v", err)
 	}
 
 	clean := strings.Trim(buf.String(), " \n")
