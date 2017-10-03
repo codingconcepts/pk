@@ -14,7 +14,7 @@ func main() {
 		flag.PrintDefaults()
 	}
 
-	timeout := flag.Duration("t", time.Second*10, "timeout in Go format (1s etc.)")
+	timeout := flag.Duration("t", time.Second*10, "timeout in Go time.Duration format")
 	flag.Parse()
 
 	flagArgs := flag.Args()
