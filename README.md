@@ -5,4 +5,5 @@ Kill a process by the port it's listening on
 
 - [ ] Unit tests
 - [ ] Implement for Linux
-- [ ] Implement for Windows 
+- [x] Implement for Windows
+- [ ] Tidy up Windows PID string search
