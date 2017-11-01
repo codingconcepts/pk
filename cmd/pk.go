@@ -4,8 +4,11 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"os"
 	"strconv"
 	"time"
+
+	"github.com/codingconcepts/pk"
 )
 
 func main() {
@@ -15,7 +18,13 @@ func main() {
 	}
 
 	timeout := flag.Duration("t", time.Second*10, "timeout in Go time.Duration format")
+	debug := flag.Bool("d", false, "performs a dry-run")
 	flag.Parse()
+
+	if len(flag.Args()) == 0 {
+		flag.Usage()
+		os.Exit(1)
+	}
 
 	flagArgs := flag.Args()
 	port, err := strconv.Atoi(flagArgs[0])
@@ -23,12 +32,17 @@ func main() {
 		log.Fatalf("'%s' is not a valid port number", flagArgs[0])
 	}
 
-	pid, err := getPid(port, *timeout)
+	pid, err := pk.GetPid(port, *timeout)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	if err = killPid(pid, *timeout); err != nil {
+	if *debug {
+		fmt.Println(pid)
+		return
+	}
+
+	if err = pk.KillPid(pid, *timeout); err != nil {
 		log.Fatal(err)
 	}
 }

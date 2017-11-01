@@ -1,6 +1,4 @@
-// +build darwin
-
-package main
+package pk
 
 import (
 	"bytes"
@@ -13,7 +11,8 @@ import (
 	"time"
 )
 
-func getPid(port int, timeout time.Duration) (pid int, err error) {
+// GetPid returns the ID of the process that's exposing the given port.
+func GetPid(port int, timeout time.Duration) (pid int, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
 
@@ -30,7 +29,8 @@ func getPid(port int, timeout time.Duration) (pid int, err error) {
 	return strconv.Atoi(clean)
 }
 
-func killPid(pid int, timeout time.Duration) (err error) {
+// KillPid terminates a process by a given process ID.
+func KillPid(pid int, timeout time.Duration) (err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
 
