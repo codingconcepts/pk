@@ -32,17 +32,19 @@ func main() {
 		log.Fatalf("'%s' is not a valid port number", flagArgs[0])
 	}
 
-	pid, err := pk.GetPid(port, *timeout)
+	pids, err := pk.GetPids(port, *timeout)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	if *debug {
-		fmt.Println(pid)
+		fmt.Println(pids)
 		return
 	}
 
-	if err = pk.KillPid(pid, *timeout); err != nil {
-		log.Fatal(err)
+	for _, pid := range pids {
+		if err = pk.KillPid(pid, *timeout); err != nil {
+			log.Fatal(err)
+		}
 	}
 }

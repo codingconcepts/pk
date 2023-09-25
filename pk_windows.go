@@ -11,7 +11,7 @@ import (
 )
 
 // GetPid returns the ID of the process that's exposing the given port.
-func GetPid(port int, timeout time.Duration) (pid int, err error) {
+func GetPids(port int, timeout time.Duration) (pid []int, err error) {
 	netstat := exec.Command("netstat", "-a", "-n", "-o")
 	findstr := exec.Command("findstr", fmt.Sprintf("%d", port))
 	findstr.Stdin, _ = netstat.StdoutPipe()
@@ -19,13 +19,13 @@ func GetPid(port int, timeout time.Duration) (pid int, err error) {
 	buf := new(bytes.Buffer)
 	findstr.Stdout = buf
 	if err = findstr.Start(); err != nil {
-		return 0, fmt.Errorf("error starting findstr: %v", err)
+		return nil, fmt.Errorf("error starting findstr: %v", err)
 	}
 	if err = netstat.Run(); err != nil {
-		return 0, fmt.Errorf("error running netstat: %v", err)
+		return nil, fmt.Errorf("error running netstat: %v", err)
 	}
 	if err = findstr.Wait(); err != nil {
-		return 0, fmt.Errorf("error waiting on findstr: %v", err)
+		return nil, fmt.Errorf("error waiting on findstr: %v", err)
 	}
 
 	firstLine := strings.Split(buf.String(), "\n")[0]
@@ -33,7 +33,7 @@ func GetPid(port int, timeout time.Duration) (pid int, err error) {
 
 	id := columns[len(columns)-1]
 	clean := strings.Trim(id, " \r\n")
-	return strconv.Atoi(clean)
+	return stringToPids(clean)
 }
 
 // KillPid terminates a process by a given process ID.

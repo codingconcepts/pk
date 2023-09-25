@@ -12,7 +12,7 @@ import (
 )
 
 // GetPid returns the ID of the process that's exposing the given port.
-func GetPid(port int, timeout time.Duration) (pid int, err error) {
+func GetPids(port int, timeout time.Duration) (pid []int, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
 
@@ -22,11 +22,11 @@ func GetPid(port int, timeout time.Duration) (pid int, err error) {
 	cmd.Stderr = os.Stderr
 
 	if err := cmd.Run(); err != nil {
-		return 0, fmt.Errorf("error fetching ports: %v", err)
+		return nil, fmt.Errorf("error fetching ports: %v", err)
 	}
 
 	clean := strings.Trim(buf.String(), " \n")
-	return strconv.Atoi(clean)
+	return stringToPids(clean)
 }
 
 // KillPid terminates a process by a given process ID.
